@@ -1,0 +1,33 @@
+{% extends base.html %}
+{% block content %}
+<div data-role="popup" id="errorPopup">
+	<p id="errorMsg"></p>
+</div>
+<div class="ui-grid-solo">
+	<div class="ui-block-a" text-align=center><p style="margin: 0 auto;" class="marquee" id="divSongTitle">...</p></div>
+</div>
+<div class="ui-grid-solo">
+	<div class="ui-block-a"><input type="range" name="sliderProgress" id="sliderProgress" data-highlight="true" value="0", min="0", max="100"></div>	
+</div>
+<div class="ui-grid-solo">	
+	<div class="ui-block-a" style="text-align:center">
+		<div data-role="controlgroup" data-type="horizontal" data-inline="true">
+			<a href="#" data-role="button"><img id="mplayer-skipbutton" class="mplayer-icon" src="images/mediaplayer/mplayer_skiptostart.png"/></a>
+			<a href="#" data-role="button"><img id="mplayer-playbutton" class="mplayer-icon" src="images/mediaplayer/mplayer_play.png"/></a>
+			<a href="#" data-role="button"><img id="mplayer-stopbutton" class="mplayer-icon" src="images/mediaplayer/mplayer_stop.png"/></a>
+			<a href="#" data-role="button"><img id="mplayer-endbutton" class="mplayer-icon" src="images/mediaplayer/mplayer_end.png"/></a>
+		</div>
+	</div>
+</div>
+<div id="mplayer-adv-controls" class="ui-grid-solo" style="text-align:center">
+	<div class="ui-block-a" style="text-align:center"><div data-role="controlgroup" data-type="horizontal">
+		<a href="#" data-role="button"><img id="mplayer_repeatbutton" class="mplayer-icon" src="images/mediaplayer/mplayer_repeat.png"/></a>
+		<a href="#" data-role="button"><img id="mplayer_shufflebutton" class="mplayer-icon" src="images/mediaplayer/mplayer_shuffle.png"/></a>
+	</div></div>
+</div>
+<div style="text-align:center">
+	<div style="display:inline-block; vertical-align:middle; height:100%; width:350px"><input type="range" name="volslider" id="mplayer-volslider" data-highlight="true" min="0" max="100" value="50"></div>
+</div>
+{% end block %}
+{% block footer %}
+{% end block %}

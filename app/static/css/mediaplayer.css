@@ -1,0 +1,35 @@
+img.mplayer-icon{
+	width:30px;
+	height:30px;
+}
+
+p#errorMsg{
+	color:red;
+}
+
+p#divSongTitle{
+	font-size:1.8em;
+	-webkit-animation-name: marquee;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-duration:10s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-delay:3s;
+	margin:0;
+	padding: 0;
+	white-space:nowrap;
+	overflow: hidden;
+	text-align:center;
+  }
+  
+@-webkit-keyframes marquee{
+	0%{
+		text-indent:0%;
+		}
+	100%{
+		text-indent:-100%
+	}
+}
+
+#sliderProgress.ui-slider-input {
+    display : none;
+}
