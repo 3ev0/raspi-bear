@@ -3,17 +3,18 @@ import os.path
 import json
 import flask 
 
-import jukebox
+from raspibear import jukebox
 
 log = logging.getLogger(__name__)
-audioplayer = None
 
 apibp = flask.Blueprint("jukebox_api", __name__)
-bp = flask.Blueprint("jukebox", __name__)
+bp = flask.Blueprint("jukebox", __name__, static_folder="static", template_folder="templates")
+
+audioplayer = jukebox.getPlayer()
 
 @bp.route("/")
 def show_jukebox():
-    return flask.render_template("jukebox.html")
+    return flask.render_template("jukebox.html", title="jukebox")
 
 @apibp.route("/status")
 def status():
@@ -50,7 +51,7 @@ def voldown():
     log.info("Received 'voldown' command")
     return json.dumps(audioplayer.decrease_volume())
 
-@apibp.route("/setvol/<value:int>")
+@apibp.route("/setvol/<int:value>")
 def setvol(value):
     log.info("Received 'setvol' command with value %s", value)
     return json.dumps(audioplayer.set_volume(value))
@@ -65,7 +66,7 @@ def play():
     log.info("Received 'play' command")
     return json.dumps(audioplayer.play())
     
-@apibp.route("/play/<value:path>")    
+@apibp.route("/play/<path:value>")    
 def playpath(value):
     if os.path.isfile(value):
         log.info("Received 'play' command with file path %s", value)

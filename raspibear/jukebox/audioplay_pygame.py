@@ -5,30 +5,30 @@ Created on Oct 4, 2013
 '''
 import logging
 import os.path
-import subprocess
 import threading
 import time
 
 import pygame
-import pygame.mixer
 import pygame.mixer_music as pmm
+import pygame.mixer
 import pygame.event as pevent
 import hsaudiotag.auto
 
-from . import globals
+from raspibear import globals
 
-VOLSTEP = 5 #percent
+volstep = 5 #percent
+supp_exts = ["wav", "mp3"]
 
 log = logging.getLogger(__name__)
 pygame.mixer.init()
-pygame.mixer.init()
-
+pygame.mixer.init() # Needs to be done twice...
+        
 class AudioPlayer(object):
     def __init__(self):
         log.info("AudioPlayer.init() called")
-        self.volume = globals.config["player"].getint("def_volume")
-        self.max_volume = globals.config["player"].getint("max_volume")
-        self.defaultdir = globals.config["player"]["audio_dir"]        
+        self.volume = globals.config["jukebox"].getint("def_volume")
+        self.max_volume = globals.config["jukebox"].getint("max_volume")
+        self.defaultdir = globals.config["jukebox"]["audio_dir"]        
         self._stopped = threading.Event()
         self._lock = threading.Lock()
         self.mute = False
@@ -105,7 +105,7 @@ class AudioPlayer(object):
             
             if not filepaths:
                 log.warning("No filepaths received with play, reading default dir %s", self.defaultdir)
-                filepaths = [os.path.join(self.defaultdir, fp) for fp in os.listdir(self.defaultdir) if (os.path.splitext(fp)[1][1:] in globals.supp_exts)]
+                filepaths = [os.path.join(self.defaultdir, fp) for fp in os.listdir(self.defaultdir) if (os.path.splitext(fp)[1][1:] in supp_exts)]
             
             self.pause = False
             self._signalstop = False
@@ -198,7 +198,7 @@ class AudioPlayer(object):
     def decrease_volume(self):
         log.debug("AudioPlayer.decrease_vol() called")
         with self._lock:
-            newvol = self.volume - VOLSTEP if (self.volume - VOLSTEP > 0) else 0
+            newvol = self.volume - volstep if (self.volume - volstep > 0) else 0
             pmm.set_volume(newvol/100)
             self.volume = newvol
             log.info("Volume decreased to %d", self.volume)
@@ -207,7 +207,7 @@ class AudioPlayer(object):
     def increase_vol(self):
         log.debug("AudioPlayer.increase_vol() called")
         with self._lock:
-            newvol = self.volume + VOLSTEP if (self.volume + VOLSTEP < self.max_volume) else self.max_volume
+            newvol = self.volume + volstep if (self.volume + volstep < self.max_volume) else self.max_volume
             pmm.set_volume(newvol/100)
             self.volume = newvol
             log.info("Volume increased to %d", self.volume)
