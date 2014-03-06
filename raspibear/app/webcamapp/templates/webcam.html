@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="{{ url_for("camcontrol.static", filename="camcontrol.js") }}"></script>
+<script type="text/javascript">
+	var Raspibear = Raspibear || {};
+	Raspibear.Camcontrol = Raspibear.Camcontrol || {}
+	
+	Raspibear.Camcontrol.STATUS_INTERVAL = {{ status_interval|tojson }}
+	Raspibear.Camcontrol.AJAX_TIMEOUT = 5000	
+	Raspibear.Camcontrol.API_BASEURL = {{ url_for("camcontrol_api.index")|tojson }}	
+</script>
+<link rel="stylesheet" href="{{ url_for("camcontrol.static", filename="camcontrol.css") }}">
+<div data-role="content">
+	<div>
+	<select id="onOffSwitch" data-role="flipswitch">
+      <option value="off">Off</option>
+      <option value="on">On</option>
+    </select>
+    <select name="resolutionSelect" id="resolutionSelect" data-mini="true" data-inline="true">
+	  <option value="640x480">640x480</option>
+	  <option value="320x240">320x240</option>
+	</select>
+  	<select name="framerateSelect" id="framerateSelect" data-mini="true" data-inline="true">
+	  <option value="30">30</option>
+	  <option value="15">15</option>
+	  <option value="5">5</option>
+	</select>
+  	</div>
+  	<div>
+  	<img id="camviewImg" src={{ ""|tojson}}></img> 
+  	</div>
+</div>
+  
+{% endblock %}
+{% block footer %}
+{% endblock %}

@@ -1,0 +1,3 @@
+[console_scripts]
+raspibear = raspibear.runapp:main
+

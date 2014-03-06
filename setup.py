@@ -7,6 +7,6 @@ setuptools.setup(
     description = "RaspiBear web interface. A web interface and REST for controlling the RaspiBear!",
     license = "Apache",
     entry_points = {
-        'console_scripts': ['raspibear = raspibear.cli:main']
+        'console_scripts': ['raspibear = raspibear.runapp:main']
     }
 )
