@@ -9,9 +9,9 @@ _MS_INPUTLIB = "/usr/local/lib/input_uvc.so"
 _MS_OUTPUTLIB =  "/usr/local/lib/output_http.so"
 
 log = logging.getLogger(__name__)
-
 log.info("Webcam module initializing...")
 config = {}
+applock = threading.Lock()
 running = False
 _streamer = {"lastConnection":None,
              "proc":None,
@@ -22,6 +22,12 @@ _signalstop = False
     
 def setConfig(**kwargs):
     config.update(kwargs)
+    
+def setSetting(**kwargs):
+    config.update(kwargs)
+    stop()
+    start()
+    
     
 def _selfTest():
     log.debug("Checking dependencies...")
@@ -40,7 +46,7 @@ def _selfTest():
     return
     
 def start():
-    global _signalstop
+    global _signalstop, running
     log.debug("webcam.start() called")
     with _lock:
         if running:

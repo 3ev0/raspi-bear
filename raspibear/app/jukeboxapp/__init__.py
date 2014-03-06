@@ -20,54 +20,50 @@ def index():
 
 @apibp.route("/settings")
 def settings():
-    return json.dumps(jukebox.getPlayer().settings)
+    return json.dumps(jukebox.config)
 
 @apibp.route("/status")
 def status():
-    return json.dumps(jukebox.getPlayer().get_status())
-
-@apibp.route("/mute")
-def mute():
-    return json.dumps(jukebox.getPlayer().mute_toggle())
+    return json.dumps(jukebox.getStatus())
     
 @apibp.route("/skip2end")
 def skip2end():
-    return json.dumps(jukebox.getPlayer().skip2end())
+    return json.dumps(jukebox.skip2end())
 
 @apibp.route("/skip2start")
 def skip2start():
-    return json.dumps(jukebox.getPlayer().skip2start())
+    return json.dumps(jukebox.skip2start())
 
 @apibp.route("/stop")
 def stop():
-    return json.dumps(jukebox.getPlayer().stop())
+    return json.dumps(jukebox.stop())
     
 @apibp.route("/volup")
 def volup():
-    return json.dumps(jukebox.getPlayer().increase_volume())
+    return json.dumps(jukebox.increaseVolume())
 
 @apibp.route("/voldown")
 def voldown():
-    return json.dumps(jukebox.getPlayer().decrease_volume())
+    return json.dumps(jukebox.decreaseVolume())
 
 @apibp.route("/setvol/<int:value>")
 def setvol(value):
-    return json.dumps(jukebox.getPlayer().set_volume(value))
+    return json.dumps(jukebox.setVolume(value))
         
 @apibp.route("/pause")
 def pause():
-    return json.dumps(jukebox.getPlayer().pause_toggle())
+    return json.dumps(jukebox.pauseToggle())
     
 @apibp.route("/play")    
 def play():
-    return json.dumps(jukebox.getPlayer().play_dir())
+    return json.dumps(jukebox.play_dir())
     
 @apibp.route("/play/<path:value>")    
 def playpath(value):
     if os.path.isfile(value):
-        return json.dumps(jukebox.getPlayer().play([value]))
+        return json.dumps(jukebox.play([value]))
     elif os.path.isdir(value):
-        return json.dumps(jukebox.getPlayer().play_dir(value))
+        return json.dumps(jukebox.play_dir(value))
     else:
         raise Exception("{} is not a valid path".format(value))
     

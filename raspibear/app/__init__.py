@@ -2,7 +2,7 @@ import os
 import flask
 import logging
 
-#from raspibear import jukebox 
+from raspibear import jukebox 
 from raspibear import webcam
 from . import jukeboxapp
 from . import webcamapp
@@ -20,7 +20,7 @@ raspibearapp.config.from_envvar("RASPIBEAR_CONFIG", silent=True)
 
 @raspibearapp.before_first_request
 def init_stuff():
-    #jukebox.basic_config(**globals.config["jukebox"])
+    jukebox.setConfig(**raspibearapp.config["JUKEBOX_CFG"])
     webcam.setConfig(**raspibearapp.config["WEBCAM_CFG"])
     logging.basicConfig(level=logging.DEBUG if raspibearapp.config["DEBUG"] else logging.INFO,
                         format="%(asctime)s | %(levelname)s | %(message)s"

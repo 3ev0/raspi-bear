@@ -18,21 +18,30 @@ def show():
 def index():
     pass
 
-@apibp.route("/settings/<setting>/<value>")
-def setting(setting, value):
-    return json.dumps(webcam.set(setting=value))
+@apibp.route("/settings/<setting>", method="GET")
+def getSetting(setting):
+    with webcam.applock:
+        return json.dumps(webcam.config[setting])
 
-@apibp.route("/switchpower/<value>")
+@apibp.route("/settings/<setting>", method="PUT")
+def setSetting(setting):
+    value = json.loads(flask.request.form[setting])
+    with webcam.applock:
+        return json.dumps(webcam.set(setting=value))
+
+@apibp.route("/switchpower/<value>", method="GET")
 def switchPower(value):
-    if value == "off":
-        res = webcam.stop()        
-    elif value == "on":
-        res = webcam.start()
-    else:
-        flask.abort(404)
-    return json.dumps("on" if res else "off")
+    with webcam.applock:
+        if value == "off":
+            res = webcam.stop()        
+        elif value == "on":
+            res = webcam.start()
+        else:
+            flask.abort(404)
+        return json.dumps("on" if res else "off")
 
 @apibp.route("/status")
 def status():
-    return json.dumps(webcam.getStatus())
+    with webcam.applock:
+        return json.dumps(webcam.getStatus())
         

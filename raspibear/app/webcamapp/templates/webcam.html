@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<script src="{{ url_for("camcontrol.static", filename="camcontrol.js") }}"></script>
+<script src="{{ url_for("webcam.static", filename="camcontrol.js") }}"></script>
 <script type="text/javascript">
 	var Raspibear = Raspibear || {};
 	Raspibear.Camcontrol = Raspibear.Camcontrol || {}
 	
 	Raspibear.Camcontrol.STATUS_INTERVAL = {{ status_interval|tojson }}
 	Raspibear.Camcontrol.AJAX_TIMEOUT = 5000	
-	Raspibear.Camcontrol.API_BASEURL = {{ url_for("camcontrol_api.index")|tojson }}	
+	Raspibear.Camcontrol.API_BASEURL = {{ url_for("webcam_api.index")|tojson }}	
 </script>
-<link rel="stylesheet" href="{{ url_for("camcontrol.static", filename="camcontrol.css") }}">
+<link rel="stylesheet" href="{{ url_for("webcam.static", filename="camcontrol.css") }}">
 <div data-role="content">
 	<div>
 	<select id="onOffSwitch" data-role="flipswitch">

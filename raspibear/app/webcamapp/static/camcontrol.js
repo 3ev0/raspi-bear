@@ -26,7 +26,7 @@ Raspibear.Camcontrol.CamControlApp = function(){
 		this.resSelect.on("change", function(event){
 			$this = $(this)
 			console.log("ResolutionSelect changed:" + $this.val())
-			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "setresolution/" + $this.val(), type:"GET", timeout:Raspibear.Camcontrol.AJAX_TIMEOUT}).done(function(resp){
+			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "settings/resolution" + $this.val(), type:"PUT", timeout:Raspibear.Camcontrol.AJAX_TIMEOUT}).done(function(resp){
 				console.log("setresolution resp: " + resp)		
 				thisApp.resSelect.val(jQuery.parseJSON(resp))
 				thisApp.resSelect.selectmenu("refresh")
@@ -86,19 +86,19 @@ $(document).ajaxError(function(event, request, settings, exception){
 	$("#errorPopup").popup("open")
 })
 
-$("#camcontrol").on("pagehide", function(event, ui){
+$("#webcam").on("pagehide", function(event, ui){
 	console.debug("pagehide")
 	Raspibear.Camcontrol.ccApp.stopStatusTimer()
 })
 
-$("#camcontrol").on("pageinit", function(event, ui){
+$("#webcam").on("pageinit", function(event, ui){
 	console.debug("pageinit")
 	Raspibear.Camcontrol.ccApp = new Raspibear.Camcontrol.CamControlApp()
 	Raspibear.Camcontrol.ccApp.init()
 	
 });
 
-$("#camcontrol").on("pageshow", function(event, ui){
+$("#webcam").on("pageshow", function(event, ui){
 	console.debug("pageshow")
 	Raspibear.Camcontrol.ccApp.startStatusTimer()
 });

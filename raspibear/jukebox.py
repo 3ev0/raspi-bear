@@ -14,7 +14,8 @@ SUPP_EXTENSIONS = ["wav", "mp3"]
 
 log = logging.getLogger(__name__)
 log.debug("jukebox initializing...")              
-config = None
+config = {}
+applock = threading.Lock()
 _player = {"curfileidx":None,
            "curfilelen":None,
            "signalstop":None,

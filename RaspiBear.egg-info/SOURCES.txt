@@ -1,8 +1,0 @@
-RaspiBear.egg-info/PKG-INFO
-RaspiBear.egg-info/SOURCES.txt
-RaspiBear.egg-info/dependency_links.txt
-RaspiBear.egg-info/entry_points.txt
-RaspiBear.egg-info/top_level.txt
-raspibear/__init__.py
-raspibear/globals.py
-raspibear/runapp.py
