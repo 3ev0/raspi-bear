@@ -12,6 +12,12 @@ Raspibear.Camcontrol.CamControlApp = function(){
 		this.camViewImg = $("#camViewImg")
 		
 		thisApp = this
+		
+		var onSwitchChange = function(){
+			
+			
+		}
+		
 		this.onOffSwitch.on("change", function(event){
 			$this = $(this)
 			console.debug("Switch toggled: " + $this.val())
@@ -40,12 +46,14 @@ Raspibear.Camcontrol.CamControlApp = function(){
 				console.log("setframerate resp: " + resp)		
 				thisApp.framerateSelect.val(jQuery.parseJSON(resp))
 				thisApp.framerateSelect.selectmenu("refresh")
-				});
+				});	
 		})		
 	}
 	
 	var updateUI = function (statusDict){
-		//TODO
+		console.debug("Updating ui..")
+		this.onOffSwitch.val(statusDict["power"].toString())
+		this.onOffSwitch.flipswitch("refresh")
 		return true	
 	};
 	
@@ -101,5 +109,9 @@ $("#webcam").on("pageinit", function(event, ui){
 $("#webcam").on("pageshow", function(event, ui){
 	console.debug("pageshow")
 	Raspibear.Camcontrol.ccApp.startStatusTimer()
+	$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "status",type:"GET",timeout:Raspibear.Camcontrol.AJAX_TIMEOUT}).done(function(resp){
+				console.debug("Status received: " + resp)
+				return Raspibear.Camcontrol.ccApp.updateUI(jQuery.parseJSON(resp))
+				})
 });
 	

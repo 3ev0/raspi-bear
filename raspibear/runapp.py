@@ -10,7 +10,7 @@ def main():
     argparser.add_argument("-p", "--port", default=default_config.PORT, help="Port to listen on. Default: {}".format(default_config.PORT))
     args = argparser.parse_args()
     
-    raspibearapp.run(port=args.port, host=args.host, debug=args.debug)
+    raspibearapp.run(port=int(args.port), host=args.host, debug=args.debug)
     
 if __name__ == "__main__":
     main()
