@@ -14,13 +14,17 @@ Raspibear.Jukebox = function(){
 		this.stopButton =  $("#mplayer-stopbutton")
 		this.progressBar = $("#sliderProgress")
 		this.songTitleBox = $("#divSongTitle")
+		this.playlistView = $("#playlistViewDiv")
 		
 		thisJukebox = this
 		
 		thisJukebox.volSlider.on("slidestop", function(event, ui){
 			console.log("Volslider set")
 			$this = $(this)
-			$.ajax({url:API_BASEURL + "setvol/" + $this.val(), type:"GET", timeout:AJAX_TIMEOUT}).done(function(resp){
+			$.ajax({url:API_BASEURL + "setvol", 
+					type:"PUT", 
+					timeout:AJAX_TIMEOUT,
+					data:{"volume":$this.val()}}).done(function(resp){
 				console.log("Setvol response: " + resp)
 				thisJukebox.volSlider.val(jQuery.parseJSON(resp))
 				thisJukebox.volSlider.slider("refresh")
@@ -29,10 +33,14 @@ Raspibear.Jukebox = function(){
 			
 		this.playButton.on("click", function(event){
 			console.log("Play clicked")
-			$.ajax({url:API_BASEURL + "play", type:"GET", timeout:AJAX_TIMEOUT}).done(function(resp){
-				console.log("play resp: " + resp)		
-				thisJukebox.updateUI(jQuery.parseJSON(resp))	
-				});
+			$.ajax({url:API_BASEURL + "play", 
+					type:"POST", 
+					timeout:AJAX_TIMEOUT,
+					data:{"song_idx":0}
+				}).done(function(resp){
+					console.log("play resp: " + resp)		
+					thisJukebox.updateUI(jQuery.parseJSON(resp))	
+					});
 			console.log("play cmd sent")
 			return false
 		})
@@ -57,21 +65,82 @@ Raspibear.Jukebox = function(){
 			return false
 		})
 		
-		this.stopButton.click(function(event){
-			console.log("click stop")
-			$.ajax({url:API_BASEURL + "stop", type:"GET", timeout:AJAX_TIMEOUT}).done(function(resp){
-				console.log("stop resp: " + resp)
-				thisJukebox.updateUI(jQuery.parseJSON(resp))
-				});
-			console.log("stop cmd sent")
-			return false
-		})
-		
 		console.debug("Retrieving status...")
-		$.ajax({url:API_BASEURL + "status", type:"GET", timeout:AJAX_TIMEOUT}).done(function(resp){
-			console.log("Status received: " + resp)
-			return thisJukebox.updateUI(jQuery.parseJSON(resp))
+		$.ajax({url:API_BASEURL + "status", 
+				type:"GET", 
+				timeout:AJAX_TIMEOUT
+				}).done(function(resp){
+					console.log("Status received: " + resp)
+					return thisJukebox.updateUI(jQuery.parseJSON(resp))
+				})
+		
+		console.debug("Retrieving playlists...")
+		$.ajax({url:API_BASEURL + "playlists", 
+				type:"GET", 
+				timeout:AJAX_TIMEOUT}).done(function(resp){
+			console.log("Playlists received: " + resp)
+			return thisJukebox.updatePlaylistSelect(jQuery.parseJSON(resp))
 			})
+		
+	}
+	
+	var updatePlaylistSelect = function(playlists){
+		thisJukebox = this
+		
+		pdiv = $("#playlistSelectDiv")
+		pdiv.html("")
+		var s = $("<select id='playlistSelect'></select>")
+		for(var idx in playlists){
+			$("<option />", {value:idx, text: playlists[idx]}).appendTo(s)
+		}
+		s.appendTo(pdiv)
+		s.on("change", function(event){
+			console.log("Playlist selected: " + s.val())
+			$.ajax({url:API_BASEURL + "playlist",
+					type:"POST",
+					timeout:AJAX_TIMEOUT,
+					data:{"playlist_idx":s.val()}}).done(function(resp){
+						console.log("Playlistselect resp: " + resp)
+						thisJukebox.updatePlaylistView(jQuery.parseJSON(resp))
+					})
+		})
+		s.selectmenu()
+		console.log("Playlist selected: " + s.val())
+		$.ajax({url:API_BASEURL + "playlist",
+					type:"POST",
+					timeout:AJAX_TIMEOUT,
+					data:{"playlist_idx":s.val()}
+		}).done(function(resp){
+			console.log("Playlistselect resp: " + resp)
+			thisJukebox.updatePlaylistView(jQuery.parseJSON(resp))
+			})
+	}
+	
+	var updatePlaylistView = function(oPlaylist){
+		console.debug("Building playlist view for playlist '" + oPlaylist.name + "'")
+		var ul = $("<ol id='playlistViewList' data-role='listView'></ol>")
+		for(var idx in oPlaylist.songs){
+			songnum = parseInt(idx)+1
+			li = $("<li id='song" + idx + "' ><a data-role='button' href='#' class='ui-btn ui-corner-all'>" + oPlaylist.songs[idx].name + "</a></li>")
+			li.on("click", function(event){
+				songidx = this.id.substring(4)
+				console.debug("selected song " + songidx)
+				$.ajax({url:API_BASEURL + "play", 
+						type:"POST", 
+						timeout:AJAX_TIMEOUT,
+						data:{"song_idx":songidx}})
+				.done(function(resp){
+					console.log("play resp: " + resp)		
+					thisJukebox.updateUI(jQuery.parseJSON(resp))	
+					});
+				console.log("play cmd sent")
+				return false
+			})
+			li.appendTo(ul)			
+		}
+		this.playlistView.append(ul)
+		ul.listview()		
+		
 	}
 	
 	var updatePauseUI = function(pauseOn){
@@ -104,13 +173,25 @@ Raspibear.Jukebox = function(){
 	}
 	
 	var updateStopUI = function() {		
+		this.progressBar.attr("max", 100)
+		this.progressBar.val(0).slider("refresh")	
+		this.songTitleBox.html("...")
+		updateMarqueeRange(this.songTitleBox.get(0))
+		
+		$("#playlistViewList li").attr("class", "")
+				
+		
 		this.playButton.attr("src", URL_PLAYBUTTON);
 		this.playButton.off("click")
 		this.playButton.click(function(event){
-			$.ajax({url:API_BASEURL + "play", type:"GET", timeout:AJAX_TIMEOUT}).done(function(resp){
-				console.log("play resp: " + resp)		
-				thisJukebox.updateUI(jQuery.parseJSON(resp))	
-				});
+			$.ajax({url:API_BASEURL + "play", 
+					type:"POST", 
+					timeout:AJAX_TIMEOUT, 
+					data:{"song_idx":0}
+					}).done(function(resp){
+						console.log("play resp: " + resp)		
+						thisJukebox.updateUI(jQuery.parseJSON(resp))	
+						});
 			return false
 		})
 	};
@@ -122,20 +203,24 @@ Raspibear.Jukebox = function(){
 		}
 		//Set pause status
 		else{
+			if(this.songTitleBox.html() != statusDict.cur_song){
+				this.songTitleBox.html(statusDict.cur_song)
+				updateMarqueeRange(this.songTitleBox.get(0))
+			}
+			if(statusDict.cur_song_idx >= 0){
+				$("#playlistViewList li.current").attr("class", "")
+				var sid = "song" + statusDict.cur_song_idx
+				$("#playlistViewList li#" + sid).attr("class", "current")
+			}
+			
+			this.progressBar.attr("max", statusDict.duration)
+			this.progressBar.val(statusDict.progress).slider("refresh")	
+			
 			this.updatePauseUI(statusDict.paused)		
 		}	
 			
 		//Set volume
 		this.volSlider.val(statusDict.vol).slider("refresh")
-		
-		
-		//Set songstatus
-		if(this.songTitleBox.html() != statusDict.song){
-			this.songTitleBox.html(statusDict.song)
-			updateMarqueeRange(this.songTitleBox.get(0))
-		}
-		this.progressBar.attr("max", statusDict.totaltime)
-		this.progressBar.val(statusDict.progress).slider("refresh")	
 		return true	
 	};
 	
@@ -163,6 +248,8 @@ Raspibear.Jukebox = function(){
 			updateUI: updateUI,
 			updateStopUI: updateStopUI,
 			updatePauseUI: updatePauseUI,
+			updatePlaylistSelect: updatePlaylistSelect,
+			updatePlaylistView: updatePlaylistView,
 			startStatusTimer: startStatusTimer,
 			stopStatusTimer: stopStatusTimer
 	};

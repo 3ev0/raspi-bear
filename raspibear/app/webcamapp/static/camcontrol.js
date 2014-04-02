@@ -9,52 +9,74 @@ Raspibear.Camcontrol.CamControlApp = function(){
 		this.onOffSwitch = $("#onOffSwitch")
 		this.resSelect = $("#resolutionSelect")
 		this.framerateSelect = $("#framerateSelect")
-		this.camViewImg = $("#camViewImg")
+		this.camViewImg = $("#camviewImg")
+		this.updatingUI = false
+		this.switchedOn = false
 		
 		thisApp = this
 		
-		var onSwitchChange = function(){
-			
-			
-		}
-		
 		this.onOffSwitch.on("change", function(event){
+			if(thisApp.updatingUI){
+				return false
+			}
 			$this = $(this)
 			console.debug("Switch toggled: " + $this.val())
 			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "switchpower/" + $this.val(), type:"GET", timeout:Raspibear.Camcontrol.AJAX_TIMEOUT}).done(function(resp){
+				thisApp.updatingUI = true
 				console.log("switchPower response: " + resp)
-				thisApp.onOffSwitch.val(jQuery.parseJSON(resp))
-				thisApp.onOffSwitch.flipswitch("refresh")
-				// Add <img> control here
-				})
+				thisApp.updateUI(jQuery.parseJSON(resp))
+				thisApp.updatingUI = false //if a 200 is not received, updating is never set to false, making the switch not respond
+			})
+			
 		})
 			
 		this.resSelect.on("change", function(event){
 			$this = $(this)
 			console.log("ResolutionSelect changed:" + $this.val())
-			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "settings/resolution" + $this.val(), type:"PUT", timeout:Raspibear.Camcontrol.AJAX_TIMEOUT}).done(function(resp){
+			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "settings/resolution", 
+					type:"PUT", 
+					timeout:Raspibear.Camcontrol.AJAX_TIMEOUT,
+					data:{"resolution":$this.val()}
+					}).done(function(resp){
 				console.log("setresolution resp: " + resp)		
-				thisApp.resSelect.val(jQuery.parseJSON(resp))
-				thisApp.resSelect.selectmenu("refresh")
-				});
+				thisApp.updateUI(jQuery.parseJSON(resp))
+			});
 		})		
 		
 		this.framerateSelect.on("change", function(event){
 			$this = $(this)
 			console.log("framerateSelect changed:" + $this.val())
-			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "setframerate/" + $this.val(), type:"GET", timeout:Raspibear.Camcontrol.AJAX_TIMEOUT}).done(function(resp){
-				console.log("setframerate resp: " + resp)		
-				thisApp.framerateSelect.val(jQuery.parseJSON(resp))
-				thisApp.framerateSelect.selectmenu("refresh")
-				});	
+			$.ajax({url:Raspibear.Camcontrol.API_BASEURL + "settings/fps", 
+					type:"PUT", 
+					timeout:Raspibear.Camcontrol.AJAX_TIMEOUT,
+					data:{"fps":$this.val()}
+					}).done(function(resp){
+				console.log("setframerate resp: " + resp)
+				thisApp.updateUI(jQuery.parseJSON(resp))
+			});	
 		})		
 	}
 	
+	var updateViewImg = function (enable, port){
+		if(enable){
+			src = "http://" + Raspibear.Camcontrol.SERVERHOST + ":" + port + "/?action=stream"
+		}
+		else{
+			src = ""
+		}
+		this.camViewImg.attr("src", src)
+		console.debug("ViewImg updated to " + this.camViewImg.attr("src"))	
+	}
+	
 	var updateUI = function (statusDict){
-		console.debug("Updating ui..")
 		this.onOffSwitch.val(statusDict["power"].toString())
 		this.onOffSwitch.flipswitch("refresh")
-		return true	
+		this.resSelect.val(statusDict["config"]["resolution"])
+		this.resSelect.selectmenu("refresh")
+		this.framerateSelect.val(statusDict["config"]["fps"])
+		this.framerateSelect.selectmenu("refresh")
+				
+		this.updateViewImg(statusDict["power"], statusDict["config"]["port"])
 	};
 	
 	var startStatusTimer = function (){		
@@ -80,7 +102,8 @@ Raspibear.Camcontrol.CamControlApp = function(){
 			init: init,
 			updateUI: updateUI,
 			startStatusTimer: startStatusTimer,
-			stopStatusTimer: stopStatusTimer
+			stopStatusTimer: stopStatusTimer,
+			updateViewImg: updateViewImg
 	};
 	return public;
 };

@@ -33,3 +33,9 @@ p#divSongTitle{
 #sliderProgress.ui-slider-input {
     display : none;
 }
+
+ol#playlistViewList li.current a{
+	color:#3388cc;
+	background-color:#f6f6f6
+}
+

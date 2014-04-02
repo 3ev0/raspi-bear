@@ -8,6 +8,7 @@
 	Raspibear.Camcontrol.STATUS_INTERVAL = {{ status_interval|tojson }}
 	Raspibear.Camcontrol.AJAX_TIMEOUT = 5000	
 	Raspibear.Camcontrol.API_BASEURL = {{ url_for("webcam_api.index")|tojson }}	
+	Raspibear.Camcontrol.SERVERHOST = {{ server|tojson }}.split(":")[0]
 </script>
 <link rel="stylesheet" href="{{ url_for("webcam.static", filename="camcontrol.css") }}">
 <div data-role="content">

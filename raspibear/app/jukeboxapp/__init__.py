@@ -18,53 +18,48 @@ def show():
 def index():
     pass
 
-@apibp.route("/settings")
-def settings():
+@apibp.route("/settings", methods=["GET"])
+def getConfig():
     return json.dumps(jukebox.config)
 
-@apibp.route("/status")
+@apibp.route("/status", methods=["GET"])
 def status():
-    return json.dumps(jukebox.getStatus())
+    return json.dumps(jukebox.getState())
     
-@apibp.route("/skip2end")
+@apibp.route("/skip2end", methods=["GET"])
 def skip2end():
     return json.dumps(jukebox.skip2end())
 
-@apibp.route("/skip2start")
+@apibp.route("/skip2start", methods=["GET"])
 def skip2start():
     return json.dumps(jukebox.skip2start())
 
-@apibp.route("/stop")
-def stop():
-    return json.dumps(jukebox.stop())
-    
-@apibp.route("/volup")
-def volup():
-    return json.dumps(jukebox.increaseVolume())
-
-@apibp.route("/voldown")
-def voldown():
-    return json.dumps(jukebox.decreaseVolume())
-
-@apibp.route("/setvol/<int:value>")
-def setvol(value):
+@apibp.route("/setvol", methods=["PUT"])
+def setvol():
+    value = int(flask.request.form["volume"])
     return json.dumps(jukebox.setVolume(value))
         
-@apibp.route("/pause")
+@apibp.route("/pause", methods=["GET"])
 def pause():
     return json.dumps(jukebox.pauseToggle())
     
-@apibp.route("/play")    
+@apibp.route("/play", methods=["POST"])    
 def play():
-    return json.dumps(jukebox.play_dir())
-    
-@apibp.route("/play/<path:value>")    
-def playpath(value):
-    if os.path.isfile(value):
-        return json.dumps(jukebox.play([value]))
-    elif os.path.isdir(value):
-        return json.dumps(jukebox.play_dir(value))
+    if "song_idx" in flask.request.form:
+        return json.dumps(jukebox.play(int(flask.request.form["song_idx"])))
+    elif "song" in flask.request.form:
+        return json.dumps(jukebox.play(flask.request.form["song"]))
     else:
-        raise Exception("{} is not a valid path".format(value))
+        raise Exception("Unexpected POST data")
+    return 
+
+@apibp.route("/playlists", methods=["GET"])
+def getPlaylists():
+    return json.dumps([pl.name for pl in jukebox.playlists])
+    
+@apibp.route("/playlist", methods=["POST"])
+def setPlaylist():
+    log.debug("this" + flask.request.form["playlist_idx"])
+    return json.dumps(jukebox.selectPlaylist(int(flask.request.form["playlist_idx"])), cls=jukebox.JukeboxEncoder)
     
         

@@ -23,11 +23,9 @@ _signalstop = False
 def setConfig(**kwargs):
     config.update(kwargs)
     
-def setSetting(**kwargs):
+def configure(**kwargs):
     config.update(kwargs)
-    stop()
-    start()
-    
+    return getStatus()
     
 def _selfTest():
     log.debug("Checking dependencies...")
@@ -44,6 +42,10 @@ def _selfTest():
     else:
         log.debug("lib file found: %s", _MS_OUTPUTLIB)
     return
+
+def restart():
+    stop()
+    start()
     
 def start():
     global _signalstop, running
@@ -51,7 +53,7 @@ def start():
     with _lock:
         if running:
             log.info("Attempting to start mjpeg_streamer, but it's allready running, nothing to do")
-            return True
+            return getStatus()
         cmdline = "{msbin} -i '{msinputlib} -r {resolution} \
                 -f {fps} -q {compression}' -o '{msoutputlib} \
                 -p {port} -n'".format(msbin=_streamer["bin"],
@@ -75,7 +77,7 @@ def start():
             running = True
             _signalstop = False
             _startMonitorThread()
-    return running
+    return getStatus()
     
 def stop():
     global running
@@ -83,7 +85,7 @@ def stop():
     with _lock:
         if not running:
             log.info("Attempting to stop mjpg_streamer, but it's not running, nothing to do")
-            return False
+            return getStatus()
         retcode = _streamer["proc"].poll()
         if retcode or retcode == 0:
             log.info("Expecting a running mjpg_streamer, but it allready returned (%d)", retcode) 
@@ -98,7 +100,7 @@ def stop():
     _monitorThread.join()        
     log.debug("monitorthread is dead")
     running = False
-    return running
+    return getStatus()
     
 def getStatus():
     log.debug("streamer.getStatus() called")

@@ -5,10 +5,12 @@ DEBUG=False
 WEBCAM_CFG = {"port":"10101",
               "resolution":"640x480",
               "fps":"5",
-              "compression":"0"
+              "compression":"100"
               }
 
-JUKEBOX_CFG = {"volume":"50",
+JUKEBOX_CFG = {"default_volume":"50",
               "max_volume":"100",
-              "playdir":"/mnt/nas/media/muziek"
+              "def_playlists":[{"name":"alles", "dirpath":"/mnt/nas/muziek/kindermuziek"},
+                               {"name":"test", "dirpath":"/home/ivo/Desktop"}
+                               ]
               }

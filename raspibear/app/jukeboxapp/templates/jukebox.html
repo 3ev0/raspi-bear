@@ -28,7 +28,6 @@
 		<div data-role="controlgroup" data-type="horizontal" data-inline="true">
 			<a href="#" data-role="button"><img id="mplayer-skipbutton" class="mplayer-icon" src="{{ url_for("jukebox.static", filename="images/mplayer_skiptostart.png") }}"/></a>
 			<a href="#" data-role="button"><img id="mplayer-playbutton" class="mplayer-icon" src="{{ url_for("jukebox.static", filename="images/mplayer_play.png") }}"/></a>
-			<a href="#" data-role="button"><img id="mplayer-stopbutton" class="mplayer-icon" src="{{ url_for("jukebox.static", filename="images/mplayer_stop.png") }}"/></a>
 			<a href="#" data-role="button"><img id="mplayer-endbutton" class="mplayer-icon" src="{{ url_for("jukebox.static", filename="images/mplayer_end.png") }}"/></a>
 		</div>
 	</div>
@@ -41,6 +40,12 @@
 </div>
 <div style="text-align:center">
 	<div style="display:inline-block; vertical-align:middle; height:100%; width:350px"><input type="range" name="volslider" id="mplayer-volslider" data-highlight="true" min="0" max="100" value="50"></div>
+</div>
+<div id="playlistSelectDiv">
+	
+</div>
+<div id="playlistViewDiv">
+
 </div>
 {% endblock %}
 {% block footer %}

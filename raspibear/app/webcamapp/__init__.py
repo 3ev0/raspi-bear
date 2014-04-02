@@ -12,7 +12,7 @@ bp = flask.Blueprint("webcam", __name__, static_folder="static", template_folder
 
 @bp.route("/")
 def show():
-    return flask.render_template("webcam.html", title="Teddycam!", page_id="webcam", status_interval=5000)
+    return flask.render_template("webcam.html", title="Teddycam!", page_id="webcam", status_interval=30000, server=flask.request.host)
 
 @apibp.route("/")
 def index():
@@ -24,22 +24,23 @@ def getSetting(setting):
         return json.dumps(webcam.config[setting])
 
 @apibp.route("/settings/<setting>", methods=["PUT"])
-def setSetting(setting):
-    value = json.loads(flask.request.form[setting])
+def configure(setting):
+    value = flask.request.form[setting]
     with webcam.applock:
-        return json.dumps(webcam.set(setting=value))
+        retval = json.dumps(webcam.configure(**{setting:value}))
+        webcam.restart()
+        return retval
 
 @apibp.route("/switchpower/<value>", methods=["GET"])
 def switchPower(value):
     with webcam.applock:
-        if value == "false":
-            res = webcam.stop()        
+        if value == "false":    
+            return json.dumps(webcam.stop())        
         elif value == "true":
-            res = webcam.start()
+            return json.dumps(webcam.start())
         else:
             flask.abort(404)
-        return json.dumps("true" if res else "true")
-
+            
 @apibp.route("/status")
 def status():
     with webcam.applock:
