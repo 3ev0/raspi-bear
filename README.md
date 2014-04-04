@@ -16,13 +16,20 @@ Pygame version >= 1.9.2 is required for py3 support.
  
 *sudo apt-get install mercurial
 sudo apt-get purge python-pygame
-pip uninstall pygame
+
+ip uninstall pygame
+
 sudo apt-get install python3-dev libsdl1.2-dev libsmpeg-dev libfreetype6-dev libsdl-mixer1.2-dev
+
 hg clone https://bitbucket.org/pygame/pygame
-cd pygame
-./configure
-sudo mkdir /usr/include/pythonx.xm/pygame
-sudo chown 0777 /usr/include/pythonx.xm/pygame*
+
+d pygame
+
+/configure
+
+udo mkdir /usr/include/pythonx.xm/pygame
+
+udo chown 0777 /usr/include/pythonx.xm/pygame*
 
 
 In your virtualenv:
