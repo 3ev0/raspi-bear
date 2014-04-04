@@ -54,7 +54,7 @@ First install the dependencies:
 
 *sudo cp output_*.so input_*.so /usr/local/lib/*
 
-start mjpeg_streamer:
+You can test mjpeg_streamer, if you like:
 
 *mjpeg_streamer -i "/usr/local/lib/input_uvc.so -r <resolution> -f <fps> -q <compression%>" \
 -o "/usr/local/lib/output_http.so -p <port> -n <nocomands>"*
