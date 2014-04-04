@@ -56,7 +56,7 @@ First install the dependencies:
 
 You can test mjpeg_streamer, if you like:
 
-*mjpeg_streamer -i "/usr/local/lib/input_uvc.so -r <resolution> -f <fps> -q <compression%>" \
+*mjpg_streamer -i "/usr/local/lib/input_uvc.so -r <resolution> -f <fps> -q <compression%>" \
 -o "/usr/local/lib/output_http.so -p <port> -n <nocomands>"*
 
 http://<addr>:<port>/?action=stream provides the stream.
