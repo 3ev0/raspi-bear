@@ -10,7 +10,5 @@ WEBCAM_CFG = {"port":"10101",
 
 JUKEBOX_CFG = {"default_volume":"50",
               "max_volume":"100",
-              "def_playlists":[{"name":"alles", "dirpath":"/mnt/nas/muziek/kindermuziek"},
-                               {"name":"test", "dirpath":"/home/ivo/Desktop"}
-                               ]
+              "def_playlists":[{"name":"test", "dirpath":"/some/path/to/muziek"}]
               }

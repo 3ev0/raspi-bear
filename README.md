@@ -70,6 +70,8 @@ install raspibear
 
 *pip install -e . -r requirements.txt*
 
+Configure using the default_config.py file. 
+
 Usage 
 =====
 raspibear -h for help

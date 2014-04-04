@@ -243,7 +243,10 @@ def getState():
     @return: dict containg the state. 
     """
     log.debug("AudioPlayer.getStatus() called")
-    cursong = cur_playlist.current()
+    try:
+        cursong = cur_playlist.current()
+    except StopIteration:
+        cursong = None
     status = {"playing": playing(),
             "paused": _player["pause"], 
             "cur_song": cursong.name if cursong else None,
