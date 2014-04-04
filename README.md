@@ -40,7 +40,7 @@ Mjpeg streamer
 First install the dependencies:
 *sudo apt-get install libjpeg8-dev imagemagick libv4l-dev*
 
-*sudo ln -s /usr/include/linux/videodev2.h /usr/include/linux/videodev.h*
+*sudo ln -fs /usr/include/linux/videodev2.h /usr/include/linux/videodev.h*
 
 *wget http://sourceforge.net/code-snapshots/svn/m/mj/mjpg-streamer/code/mjpg-streamer-code-182.zip*
 
